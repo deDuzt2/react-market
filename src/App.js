@@ -22,7 +22,9 @@ function App() {
         </div>
       </header>
       <div className="content">
-        <h1>Все кроссовки</h1>
+        <div className="content-top">
+          <h1>Все кроссовки</h1>
+        </div>
         <div className="cards">
           <div className="card">
             <img width={133} height={112} className="img-snkrs" src="img/sneakers/1.jpg" alt="sneakers" />
