@@ -1,87 +1,94 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { Drawer } from "./components/Drawer";
+import Header from "./components/Header";
+import Favorites from "./pages/Favorites";
+import Home from "./pages/Home";
+
 
 
 function App() {
+  const [items, setItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const [favoritesItems, setFavoritesItems] = useState([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
+  useEffect(() => {
+    axios.get('https://61eec226d593d20017dbb11a.mockapi.io/items')
+      .then(res => { setItems(res.data) });
+    axios.get('https://61eec226d593d20017dbb11a.mockapi.io/cart')
+      .then(res => { setCartItems(res.data) })
+    axios.get('https://61eec226d593d20017dbb11a.mockapi.io/favorites')
+      .then(res => { setFavoritesItems(res.data) })
+  }, []);
+
+  const addToCart = (obj) => {
+    axios.post('https://61eec226d593d20017dbb11a.mockapi.io/cart', obj);
+    setCartItems((prev) => [...prev, obj]);
+  }
+
+  const removeFromCart = (id) => {
+    axios.delete(`https://61eec226d593d20017dbb11a.mockapi.io/cart/${id}`);
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  const addToFavorites = async (obj) => {
+    try {
+      if (favoritesItems.find(favObj => favObj.id === obj.id)) {
+        axios.delete(`https://61eec226d593d20017dbb11a.mockapi.io/favorites/${obj.id}`);
+        setFavoritesItems((prev) => prev.filter((item) => item.id !== obj.id));
+      } else {
+        const { data } = await axios.post('https://61eec226d593d20017dbb11a.mockapi.io/favorites', obj);
+        setFavoritesItems((prev) => [...prev, data]);
+      }
+
+    } catch (error) {
+      alert('Не удалось добавить в избранное');
+      console.error(error);
+    }
+
+
+  }
+
+  const onChangeSearchInput = (event) => {
+    setSearchValue(event.target.value)
+  }
+
   return (
     <div className="wrapper clear">
-      <header className="d-flex justify-between p-45">
-        <div className="header-left d-flex align-center">
-          <img width={40} height={40} src="img/header/logo.png" alt="logo" />
-          <div className="header-info">
-            <h3>REACT SNEAKERS</h3>
-            <p>Магазин лучших кроссовок</p>
-          </div>
-        </div>
-        <div className="header-right d-flex align-center">
-          <div className="header-buy d-flex align-center mr-30">
-            <img className="mr-10" src="img/header/basket.svg" alt="basker" />
-            <div className="price">1205 руб.</div>
-          </div>
-          <img className="mr-30" src="img/header/heart.svg" alt="heart" />
-          <img src="img/header/user.svg" alt="user" />
-
-        </div>
-      </header>
-      <div className="content">
-        <div className="content-top">
-          <h1>Все кроссовки</h1>
-        </div>
-        <div className="cards">
-          <div className="card">
-            <img width={133} height={112} className="img-snkrs" src="img/sneakers/1.jpg" alt="sneakers" />
-            <div className="snkrs-name">Мужские Кроссовки Nike Blazer Mid Suede</div>
-            <div className="bottom-card">
-              <div className="info-card">
-                <span>Цена:</span>
-                <b>12 999 руб.</b>
-              </div>
-              <button>
-                <img src="img/card/add.svg" alt="add" />
-              </button>
-            </div>
-          </div>
-          <div className="card">
-            <img width={133} height={112} className="img-snkrs" src="img/sneakers/2.jpg" alt="sneakers" />
-            <div className="snkrs-name">Мужские Кроссовки Nike Air Max 270</div>
-            <div className="bottom-card">
-              <div className="info-card">
-                <span>Цена:</span>
-                <b>12 999 руб.</b>
-              </div>
-              <button>
-                <img src="img/card/add.svg" alt="add" />
-              </button>
-            </div>
-          </div>
-          <div className="card">
-            <img width={133} height={112} className="img-snkrs" src="img/sneakers/3.jpg" alt="sneakers" />
-            <div className="snkrs-name">Мужские Кроссовки Nike Blazer Mid Suede</div>
-            <div className="bottom-card">
-              <div className="info-card">
-                <span>Цена:</span>
-                <b>8 499 руб.</b>
-              </div>
-              <button>
-                <img src="img/card/add.svg" alt="add" />
-              </button>
-            </div>
-          </div>
-          <div className="card">
-            <img width={133} height={112} className="img-snkrs" src="img/sneakers/4.jpg" alt="sneakers" />
-            <div className="snkrs-name">Кроссовки Puma X Aka Boku Future Rider</div>
-            <div className="bottom-card">
-              <div className="info-card">
-                <span>Цена:</span>
-                <b>8 999 руб.</b>
-              </div>
-              <button>
-                <img src="img/card/add.svg" alt="add" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {isDrawerOpen ? <Drawer closeCart={(event) => {
+        event.stopPropagation();
+        setIsDrawerOpen(false);
+      }}
+        cartItems={cartItems}
+        setCartItems={setCartItems}
+        onRemove={removeFromCart}
+      />
+        : null
+      }
+      <Header onClickCart={() => setIsDrawerOpen(true)} />
+      <Routes>
+        <Route path="/" element={<Home
+          items={items}
+          searchValue={searchValue}
+          onChangeSearchInput={onChangeSearchInput}
+          setSearchValue={setSearchValue}
+          addToCart={addToCart}
+          addToFavorites={addToFavorites}
+        />} />
+        <Route path='favorites' element={<Favorites
+          items={favoritesItems}
+          addToFavorites={addToFavorites}
+          ddToCart={addToCart}
+        />} />
+      </Routes>
     </div>
   );
 }
 
+
+
 export default App;
+
