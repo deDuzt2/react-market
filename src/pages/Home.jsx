@@ -2,7 +2,7 @@ import React from 'react';
 import Card from "../components/Card/Card";
 
 
-export default function Home({ items, searchValue, onChangeSearchInput, setSearchValue, addToCart, addToFavorites }) {
+export default function Home({ items, searchValue, onChangeSearchInput, setSearchValue, addToCart, addToFavorites, cartItems }) {
 	return (
 
 		<div className="content">
@@ -36,7 +36,9 @@ export default function Home({ items, searchValue, onChangeSearchInput, setSearc
 								price={item.price}
 								src={item.photo}
 								favoriteFnc={(obj) => addToFavorites(obj)}
-								plusFnc={(obj) => addToCart(obj)} />
+								plusFnc={(obj) => addToCart(obj)}
+								cartAdded={cartItems.some(obj => Number(obj.id) === Number(item.id))}
+							/>
 						))}
 			</div>
 		</div>
