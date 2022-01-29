@@ -26,10 +26,10 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const cartResponse = await axios.get('https://sneakers-shop11.herokuapp.com/api/cart');
-        const favResponse = await axios.get('https://sneakers-shop11.herokuapp.com/api/favorites');
-        const ordersResponse = await axios.get('https://sneakers-shop11.herokuapp.com/api/orders');
-        const itemsResponse = await axios.get('https://sneakers-shop11.herokuapp.com/api/items');
+        const cartResponse = await axios.get('http://localhost:3004/cart');
+        const favResponse = await axios.get('http://localhost:3004/favorites');
+        const ordersResponse = await axios.get('http://localhost:3004/orders');
+        const itemsResponse = await axios.get('http://localhost:3004/items');
         setOrderItems(ordersResponse.data);
         setCartItems(cartResponse.data);
         setFavoritesItems(favResponse.data);
@@ -47,10 +47,10 @@ function App() {
   const addToCart = (obj) => {
     try {
       if (cartItems.find(itmCrt => itmCrt.id === obj.id)) {
-        axios.delete(`https://sneakers-shop11.herokuapp.com/api/cart/${obj.id}`);
+        axios.delete(`http://localhost:3004/cart/${obj.id}`);
         setCartItems((prev) => prev.filter((item) => item.id !== obj.id));
       } else {
-        axios.post('https://sneakers-shop11.herokuapp.com/api/cart', obj);
+        axios.post('http://localhost:3004/cart', obj);
         setCartItems((prev) => [...prev, obj]);
       }
 
@@ -61,7 +61,7 @@ function App() {
   }
   const removeFromCart = (obj) => {
     try {
-      axios.delete(`https://sneakers-shop11.herokuapp.com/api/cart/${obj.id}`);
+      axios.delete(`http://localhost:3004/cart/${obj.id}`);
       setCartItems((prev) => prev.filter((item) => item.id !== obj.id));
     } catch (error) {
       alert('Не удалось удалить из корзины');
@@ -73,10 +73,10 @@ function App() {
   const addToFavorites = async (obj) => {
     try {
       if (favoritesItems.find(favObj => favObj.id === obj.id)) {
-        axios.delete(`https://sneakers-shop11.herokuapp.com/api/favorites/${obj.id}`);
+        axios.delete(`http://localhost:3004/favorites/${obj.id}`);
         setFavoritesItems((prev) => prev.filter((item) => item.id !== obj.id));
       } else {
-        const { data } = await axios.post('https://sneakers-shop11.herokuapp.com/api/favorites', obj);
+        const { data } = await axios.post('http://localhost:3004/favorites', obj);
         setFavoritesItems((prev) => [...prev, data]);
       }
     } catch (error) {
@@ -90,7 +90,7 @@ function App() {
       if (i === arr.length) {
         return;
       }
-      axios.post('https://sneakers-shop11.herokuapp.com/api/orders', arr[i]);
+      axios.post('http://localhost:3004/orders', arr[i]);
       setOrderItems((prev) => [...prev, arr[i]]);
       removeFromCart(arr[i]);
       ordersUpdate(i + 1);
