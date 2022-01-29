@@ -1,0 +1,122 @@
+.drawer {
+	position: absolute;
+	width: 385px;
+	height: 100%;
+	right: 0;
+	background: #ffffff;
+	box-shadow: -10px 4px 24px rgba(0, 0, 0, 0.1);
+	padding: 30px;
+	display: flex;
+	flex-direction: column;
+	transform: translateX(100%);
+	transition: transform 0.3s ease-in-out;
+
+	.cart_item {
+		display: flex;
+		flex: 1;
+		background: #ffffff;
+		border: 1px solid #f3f3f3;
+		box-sizing: border-box;
+		border-radius: 20px;
+		padding: 20px 20px 30px;
+		align-items: center;
+		&:not(:last-child) {
+			margin-bottom: 20px;
+		}
+
+		.cart_photo_wrapper {
+			height: 85px;
+		}
+		.cart_photo {
+			width: 70px;
+			height: 70px;
+			margin-right: 20px;
+		}
+		p {
+			font-size: 14px;
+			margin: 0 0 8px 0;
+		}
+
+		b {
+			font-size: 14px;
+		}
+		.remove_btn {
+			opacity: 0.5;
+			cursor: pointer;
+			transition: opacity 0.2s ease-in-out;
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
+
+	.cart_items {
+		overflow: auto;
+	}
+	h2 {
+		margin: 0 0 30px 0;
+		font-size: 24px;
+		line-height: calc(29 / 24);
+	}
+	.drawer_bottom {
+		margin-top: auto;
+		ul {
+			margin-top: auto;
+			li {
+				display: flex;
+				&:not(:last-child) {
+					margin-bottom: 19px;
+				}
+				div {
+					flex: 1;
+					padding-bottom: -5px;
+					margin-bottom: 5px;
+					border-bottom: 1px dashed #dfdfdf;
+				}
+				span {
+					margin-right: 5px;
+				}
+				b {
+					margin-left: 5px;
+				}
+			}
+		}
+		.green_button {
+			img {
+				position: absolute;
+				top: 21px;
+				right: 33px;
+				transition: transform 0.2s ease-in-out;
+			}
+			&:hover {
+				img {
+					transform: translateX(5px);
+				}
+			}
+		}
+	}
+}
+
+.overlay {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 9;
+	overflow: hidden;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.overlayVisible {
+	visibility: visible;
+	opacity: 1;
+	transition: opacity 0.3s ease-in-out;
+	.drawer {
+		transform: translateX(0);
+		transition: transform 0.3s ease-in-out;
+	}
+}

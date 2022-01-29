@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Card from "../components/Card/Card";
+import AppContext from '../context';
 
 
-export default function Home({ items, searchValue, onChangeSearchInput, setSearchValue, addToCart, addToFavorites, cartItems }) {
+export default function Home({ searchValue, onChangeSearchInput, setSearchValue, addToCart, addToFavorites, isLoading }) {
+	const { items } = useContext(AppContext);
+	const loadArr = [{ key: 1 }, { key: 2 }, { key: 3 }, { key: 4 }, { key: 5 }, { key: 6 }, { key: 7 }, { key: 8 }, { key: 9 }, { key: 10 }, { key: 11 }, { key: 12 }]
+	const renderItems = () => {
+		return items
+			.filter((item) => item.name.toLowerCase().includes(searchValue.toLowerCase()))
+			.map((item) => (
+				<Card
+					id={item.id}
+					key={item.id}
+					name={item.name}
+					price={item.price}
+					src={item.src}
+					favoriteFnc={(obj) => addToFavorites(obj)}
+					plusFnc={(obj) => addToCart(obj)}
+					isLoading={isLoading}
+				/>
+			))
+	}
+
 	return (
 
 		<div className="content">
@@ -25,22 +45,16 @@ export default function Home({ items, searchValue, onChangeSearchInput, setSearc
 				</div>
 			</div>
 			<div className="cards">
-				{
-					items
-						.filter((item) => item.name.toLowerCase().includes(searchValue))
-						.map((item) => (
-							<Card
-								id={item.id}
-								key={item.id}
-								name={item.name}
-								price={item.price}
-								src={item.photo}
-								favoriteFnc={(obj) => addToFavorites(obj)}
-								plusFnc={(obj) => addToCart(obj)}
-								cartAdded={cartItems.some(obj => Number(obj.id) === Number(item.id))}
-							/>
-						))}
+				{isLoading
+					? loadArr.map((item) =>
+						<Card
+							key={item.key}
+							isLoading={isLoading}
+						/>
+					)
+					: renderItems()}
 			</div>
 		</div>
 	);
 }
+

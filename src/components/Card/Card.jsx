@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ContentLoader from "react-content-loader"
+import { useContext } from 'react/cjs/react.development';
+import AppContext from '../../context';
 import styles from './Card.module.scss';
 
 
-export default function Card({ name, price, src, id, favoriteFnc, plusFnc, favorited = false, cartAdded = false, isLoading = false }) {
-	const [isPlus, setIsPlus] = useState(cartAdded);
-	const [isFavorite, setIsFavorite] = useState(favorited);
+export default function Card({ name, price, src, id, favoriteFnc, plusFnc, isLoading = false }) {
+	const { isItemAdded, isFavorited } = useContext(AppContext);
+
 	const onClickPlus = () => {
 		plusFnc({ name, price, src, id });
-		setIsPlus(!isPlus);
 	};
-
 	const onClickFavorite = () => {
 		favoriteFnc({ name, price, src, id });
-		setIsFavorite(!isFavorite);
 	}
 
 
@@ -25,7 +24,7 @@ export default function Card({ name, price, src, id, favoriteFnc, plusFnc, favor
 					<ContentLoader
 						speed={2}
 						width={210}
-						height={200}
+						height={205}
 						viewBox="0 0 150 187"
 						backgroundColor="#f3f3f3"
 						foregroundColor="#ecebeb"
@@ -39,14 +38,14 @@ export default function Card({ name, price, src, id, favoriteFnc, plusFnc, favor
 					</ContentLoader>
 					:
 					<div>
-						<div onClick={onClickFavorite} className={styles.favorite}>
-							{isFavorite
-								? <img src="img/card/like-active.svg" alt="like-active." />
-								: <img src="img/card/like-disable.svg" alt="like-disable." />
-							}
+						{favoriteFnc &&
+							<div onClick={onClickFavorite} className={styles.favorite}>
+								{isFavorited(id)
+									? <img src="img/card/like-active.svg" alt="like-active." />
+									: <img src="img/card/like-disable.svg" alt="like-disable." />
+								}
+							</div>}
 
-
-						</div>
 						<img width={133} height={112} className={styles.img_snkrs} src={src} alt="sneakers" />
 						<div className={styles.snkrs_name}>{name}</div>
 						<div className={styles.bottom_card}>
@@ -54,12 +53,16 @@ export default function Card({ name, price, src, id, favoriteFnc, plusFnc, favor
 								<span>Цена:</span>
 								<b>{price} руб.</b>
 							</div>
-							<button onClick={onClickPlus}>
-								{isPlus
-									? <img src="img/card/add-active.svg" alt="add-active" />
-									: <img src="img/card/add.svg" alt="add" />
-								}
-							</button>
+							{
+								plusFnc &&
+
+								<button onClick={onClickPlus}>
+									{isItemAdded(id)
+										? <img src="img/card/add-active.svg" alt="add-active" />
+										: <img src="img/card/add.svg" alt="add" />
+									}
+								</button>
+							}
 						</div>
 					</div>
 			}
