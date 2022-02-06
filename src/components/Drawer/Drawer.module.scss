@@ -96,7 +96,14 @@
 		}
 	}
 }
-
+@media (max-width: 380px) {
+	.drawer {
+		padding: 0;
+	}
+	h2 {
+		text-align: center;
+	}
+}
 .overlay {
 	position: absolute;
 	left: 0;
